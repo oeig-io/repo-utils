@@ -9,7 +9,7 @@ cd "${SCRIPT_DIR}/.."
 # Find all directories containing .git (git repositories)
 for dir in */; do
     if [ -d "$dir/.git" ]; then
-        echo "Status for $dir:"
+        echo "=== Status for $dir: ==="
         git -C "$dir" status
         echo
     fi

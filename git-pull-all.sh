@@ -2,8 +2,9 @@
 
 # Pull latest changes for all git repositories in subdirectories
 
-# Navigate up one directory to access sibling repositories
-cd ..
+# Get the directory where this script is located, then navigate up
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+cd "${SCRIPT_DIR}/.."
 
 # Find all directories containing .git (git repositories)
 for dir in */; do

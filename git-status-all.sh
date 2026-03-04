@@ -14,7 +14,7 @@ for dir in */ .*/; do
     if [ -d "$dir/.git" ]; then
         repo_name="${dir%/}"
         echo "${COLOR_INFO}${DELIMITER} $repo_name ${DELIMITER}${COLOR_RESET}"
-        git -C "$dir" status
+        git -C "$dir" status -sb
         echo
     fi
 done

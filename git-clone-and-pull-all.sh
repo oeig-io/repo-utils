@@ -32,7 +32,7 @@ fi
 echo "Found ${#REMOTE_REPOS[@]} remote repositories"
 
 # Get array of local directories
-mapfile -t LOCAL_DIRS < <(find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \;)
+mapfile -t LOCAL_DIRS < <(find . -maxdepth 1 -type d ! -name "." ! -name ".." -exec basename {} \;)
 
 # Find and clone missing repos
 MISSING_COUNT=0

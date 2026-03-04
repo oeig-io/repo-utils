@@ -6,13 +6,17 @@
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "${SCRIPT_DIR}/.."
 
+# Source configuration
+source "${SCRIPT_DIR}/git-utils.conf"
+
 # Find all directories containing .git (git repositories)
-for dir in */; do
+for dir in */ .*/; do
     if [ -d "$dir/.git" ]; then
-        echo "Pulling $dir..."
+        repo_name="${dir%/}"
+        echo "${COLOR_INFO}${DELIMITER} Pulling $repo_name ${DELIMITER}${COLOR_RESET}"
         git -C "$dir" pull
         echo
     fi
 done
 
-echo "Done!"
+echo "${COLOR_SUCCESS}${DELIMITER} Done ${DELIMITER}${COLOR_RESET}"

@@ -6,6 +6,9 @@
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "${SCRIPT_DIR}/.."
 
+# Source configuration
+source "${SCRIPT_DIR}/git-utils.conf"
+
 # Check if gh CLI is installed
 if ! command -v gh &>/dev/null; then
     echo "Error: gh CLI is not installed"
@@ -21,7 +24,7 @@ if ! gh auth status &>/dev/null; then
 fi
 
 # Get all repos from oeig-io organization using gh CLI
-echo "Fetching repos from oeig-io organization..."
+echo "${COLOR_INFO}${DELIMITER} Fetching repos from oeig-io organization ${DELIMITER}${COLOR_RESET}"
 mapfile -t REMOTE_REPOS < <(gh repo list oeig-io --json name -q '.[].name')
 
 if [ ${#REMOTE_REPOS[@]} -eq 0 ]; then
@@ -38,16 +41,16 @@ mapfile -t LOCAL_DIRS < <(find . -maxdepth 1 -type d ! -name "." ! -name ".." -e
 MISSING_COUNT=0
 for repo in "${REMOTE_REPOS[@]}"; do
     if [[ ! " ${LOCAL_DIRS[*]} " =~ " ${repo} " ]]; then
-        echo "Cloning missing repo: $repo"
+        echo "${COLOR_INFO}${DELIMITER} Cloning $repo ${DELIMITER}${COLOR_RESET}"
         gh repo clone "oeig-io/$repo"
         ((MISSING_COUNT++))
     fi
 done
 
 if [ $MISSING_COUNT -eq 0 ]; then
-    echo "All repos already present locally"
+    echo "${COLOR_SUCCESS}All repos already present locally${COLOR_RESET}"
 else
-    echo "Cloned $MISSING_COUNT missing repositories"
+    echo "${COLOR_SUCCESS}Cloned $MISSING_COUNT missing repositories${COLOR_RESET}"
 fi
 
 echo ""

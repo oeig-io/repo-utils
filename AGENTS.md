@@ -39,6 +39,18 @@ incus exec id-01 -- su - idempiere -c "psqli -c \"SELECT name, value FROM adempi
 incus exec id-01 -- su - idempiere -c "psqli -c \"SELECT name, email FROM adempiere.ad_user WHERE name LIKE 'Bearly%';\""
 ```
 
+### Reset iDempiere database
+
+Use this workflow to restore a container to the seed database state. This is useful when deployment fails or you need to start fresh.
+
+```bash
+# Reset database (destructive - will be prompted to confirm)
+cd idempiere-golive-deploy && ./reset.sh id-01
+
+# After reset completes, reapply go-live configuration
+./deploy.sh id-01
+```
+
 ### Verify container status before taking action
 
 ```bash

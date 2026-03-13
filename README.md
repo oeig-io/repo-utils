@@ -37,6 +37,13 @@ Pull updates on existing repositories only:
 
 Both scripts operate from the parent directory (where repositories should live).
 
+## Additional Helpful Repos
+
+Here are additional repositories you might was to also include for AI reference and assistance.
+- https://github.com/idempiere/idempiere/
+- https://github.com/idempiere/idempiere.github.io/
+- https://github.com/bxservice/idempiere-rest/
+
 ---
 
 Tags: #tool-git #repo-management

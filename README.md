@@ -43,6 +43,7 @@ Here are additional repositories you might was to also include for AI reference 
 - https://github.com/idempiere/idempiere/
 - https://github.com/idempiere/idempiere.github.io/
 - https://github.com/bxservice/idempiere-rest/
+- https://github.com/bxservice/idempiere-rest-docs
 
 ---
 

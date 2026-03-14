@@ -44,6 +44,9 @@ Here are additional repositories you might was to also include for AI reference 
 - https://github.com/idempiere/idempiere.github.io/
 - https://github.com/bxservice/idempiere-rest/
 - https://github.com/bxservice/idempiere-rest-docs
+- https://github.com/anomalyco/opencode/
+- https://github.com/badlogic/pi-mono
+- https://github.com/paperclipai/paperclip
 
 ---
 

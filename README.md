@@ -18,7 +18,7 @@ This is important because manual repository synchronization is error-prone and t
 
 - `gh` cli - see `./gh-install.sh` for details on how to install
 
-`gh` details:
+`gh` installation details:
 
 === Option 1 ===
 https://github.com/cli/cli/blob/trunk/docs/install_linux.md

@@ -14,6 +14,21 @@ The purpose of this directory is to provide automated utilities for managing mul
 
 This is important because manual repository synchronization is error-prone and time-consuming when working across many projects.
 
+## Prerequisites
+
+- `gh` cli - see `./gh-install.sh` for details on how to install
+
+`gh` details:
+
+=== Option 1 ===
+https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+
+=== Option 2 ===
+nix profile add nixpkgs#gh
+
+=== Authenticate ===
+Run `gh auth login`
+
 ## Quick Start
 
 Clone missing repositories and pull all updates:

@@ -14,3 +14,5 @@
 
 sudo apt update
 sudo apt install gh
+
+#Run `gh auth login`

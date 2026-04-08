@@ -37,8 +37,9 @@ for dir in */ .*/; do
         repo_name="${dir%/}"
         echo "${COLOR_INFO}${DELIMITER} $repo_name ${DELIMITER}${COLOR_RESET}"
         
-        # Get the current branch
+        # Get the current branch (no color for branch details)
         branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
+        echo "Branch: ${branch}"
         
         # Get tracking status (behind/ahead)
         tracking_status=$(get_tracking_status "$dir")

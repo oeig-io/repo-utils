@@ -13,7 +13,9 @@ source "${SCRIPT_DIR}/git-utils.conf"
 for dir in */ .*/; do
     if [ -d "$dir/.git" ]; then
         repo_name="${dir%/}"
+        branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
         echo "${COLOR_INFO}${DELIMITER} Pulling $repo_name ${DELIMITER}${COLOR_RESET}"
+        echo "Branch: ${branch}"
         git -C "$dir" pull
         echo
     fi

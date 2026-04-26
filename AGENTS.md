@@ -96,12 +96,22 @@ Verify with user explicitly.
 
 ### Timeout guidelines
 
+When invoking these scripts, always set the bash tool `timeout` parameter to **600 seconds** (10 minutes):
+
+- `container-management/launch.sh` (container creation)
+- `idempiere-golive-deploy/deploy.sh` (full deployment)
+- `idempiere-golive-deploy/test.sh` (test runs)
+
+Other command types:
+
 | Command type | Typical timeout |
 |--------------|-----------------|
-| Container creation | 10 minutes |
-| Full deployment | 10 minutes |
+| `launch.sh` / `deploy.sh` / `test.sh` | 600 seconds |
 | Single deploy script | 2 minutes |
 | Database queries | 30 seconds |
+
+If one of these scripts times out, do not assume failure — verify actual
+state (see "Don't assume timeout means failure" above) before re-running.
 
 ## Useful Commands
 

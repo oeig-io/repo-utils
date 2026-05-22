@@ -113,6 +113,16 @@ Other command types:
 If one of these scripts times out, do not assume failure — verify actual
 state (see "Don't assume timeout means failure" above) before re-running.
 
+## Enabling/Disabling Extensions and Skills
+
+Use `pi config` to toggle extensions and skills on or off for the current session. This opens an interactive TUI where you can check/uncheck resources with `space`.
+
+```bash
+pi config
+```
+
+Common use case: enable/disable MCP (`@0xkobold/pi-mcp`) on a per-session basis. MCP is installed but disabled by default — use `pi config` to enable it when needed.
+
 ## Useful Commands
 
 ```bash

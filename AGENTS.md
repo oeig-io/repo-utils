@@ -2,7 +2,7 @@
 
 Guidelines for AI agents working in this repository.
 
-If someone asks your name, your nickname is Fred.
+If someone asks your name, your nickname is Stewy.
 
 ## Repo Orientation
 

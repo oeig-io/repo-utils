@@ -50,6 +50,8 @@ Pull updates on existing repositories only:
 | `git-clone-and-pull-all.sh` | Clone missing repos from oeig-io, then pull all | `gh` CLI installed and authenticated |
 | `git-pull-all.sh` | Pull latest changes from all local repos | Git repositories in sibling directories |
 
+See [git-shortcuts-tool](git-shortcuts-tool/SKILL.md) for the `gs` (git status) and `gp` (add, commit, pull --rebase, push) shell shortcuts used across developer machines.
+
 Both scripts operate from the parent directory (where repositories should live).
 
 ## Additional Helpful Repos

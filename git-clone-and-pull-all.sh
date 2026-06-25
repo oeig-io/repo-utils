@@ -25,7 +25,7 @@ fi
 
 # Get all repos from oeig-io organization using gh CLI
 echo "${COLOR_INFO}${DELIMITER} Fetching repos from oeig-io organization ${DELIMITER}${COLOR_RESET}"
-mapfile -t REMOTE_REPOS < <(gh repo list oeig-io --json name -q '.[].name')
+mapfile -t REMOTE_REPOS < <(gh repo list oeig-io --limit 1000 --json name -q '.[].name')
 
 if [ ${#REMOTE_REPOS[@]} -eq 0 ]; then
     echo "No repos found or gh CLI not authenticated"

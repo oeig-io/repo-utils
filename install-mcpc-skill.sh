@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# install-mcpc-skill.sh - (Re)generate the mcpc agent skill from the installed mcpc CLI
+#
+# mcpc is a universal CLI client for the Model Context Protocol (MCP):
+#   https://github.com/apify/mcpc
+# Install it with:
+#   npm install -g @apify/mcpc
+#
+# This script runs `mcpc help --skill` and writes the output to
+# wi-mcpc/mcpc-tool.md so that wi-base/refresh-skills.sh symlinks it into
+# .pi/skills/ and .opencode/skills/.
+#
+# The file is recreated on every run, so re-run this after upgrading @apify/mcpc
+# to refresh the snapshot (mcpc's built-in skill always matches the installed
+# version; this script captures that snapshot into the repo).
+#
+# Prerequisites:
+#   - mcpc CLI installed: npm install -g @apify/mcpc
+#
+# Usage: ./repo-utils/install-mcpc-skill.sh
+# Exit codes: 0 = success, non-zero = error
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SKILL_DIR="$REPO_ROOT/wi-mcpc"
+SKILL_FILE="$SKILL_DIR/mcpc-tool.md"
+
+# --- prerequisites -----------------------------------------------------------
+
+if ! command -v mcpc >/dev/null 2>&1; then
+    echo "Error: mcpc CLI not found on PATH." >&2
+    echo "Install it with: npm install -g @apify/mcpc" >&2
+    exit 1
+fi
+
+mcpc_version=$(mcpc --version 2>/dev/null || echo "unknown")
+
+# --- generate the skill snapshot ---------------------------------------------
+# Write to a temp file first, validate it, then atomically move into place so a
+# failed or interrupted run never corrupts an existing good skill file.
+tmp_file=$(mktemp)
+trap 'rm -f "$tmp_file"' EXIT
+
+if ! mcpc help --skill > "$tmp_file"; then
+    echo "Error: 'mcpc help --skill' failed." >&2
+    exit 1
+fi
+
+# Validate the snapshot looks like a SKILL.md: frontmatter with a name field.
+# Mirrors the validation in wi-base/refresh-skills.sh so the two scripts agree.
+skill_name=$(sed -n '/^---$/,/^---$/{/^---$/d; /^name: /p}' "$tmp_file" | sed 's/^name: //' | head -1)
+
+if [[ -z "$skill_name" ]]; then
+    echo "Error: 'mcpc help --skill' output is missing frontmatter 'name'." >&2
+    exit 1
+fi
+
+if [[ ! "$skill_name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+    echo "Error: mcpc skill has invalid name '$skill_name' (must be lowercase, digits, hyphens)." >&2
+    exit 1
+fi
+
+if [[ "$skill_name" != "mcpc" ]]; then
+    echo "Warning: expected skill name 'mcpc' but got '$skill_name'." >&2
+fi
+
+mkdir -p "$SKILL_DIR"
+
+# Append a generation marker as an HTML comment so anyone reading the file can
+# see which mcpc version the snapshot came from and when it was captured. The
+# comment is after the closing frontmatter `---` and is invisible to markdown
+# renderers and skill loaders.
+{
+    cat "$tmp_file"
+    echo ""
+    echo "<!-- Generated from 'mcpc help --skill' (mcpc v${mcpc_version}) on $(date -u +%Y-%m-%d) by repo-utils/install-mcpc-skill.sh -->"
+} > "$SKILL_FILE"
+
+echo "Refreshed mcpc skill: $SKILL_FILE"
+echo "  mcpc version: v${mcpc_version}"
+echo "  skill name:   ${skill_name}"
+echo ""
+echo "Next: run ./wi-base/refresh-skills.sh to (re)create the .pi/skills/ and .opencode/skills/ symlinks."

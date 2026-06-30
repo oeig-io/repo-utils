@@ -1,140 +1,96 @@
 # AGENTS.md
 
-Guidelines for AI agents working in this repository.
+The purpose of this file is to orient any actor (human or AI) working in this
+workspace and route them to the repo that owns the detail they need. It is
+important because the detail lives close to the code it describes — this file
+stays a thin, DRY map, not a copy of those docs.
 
 If someone asks your name, your nickname is Stewy.
 
-## Repo Orientation
+## Workspace Shape
 
-| Directory | Purpose |
-|-----------|---------|
-| `container-management/` | Create/manage NixOS incus containers |
-| `idempiere-golive-deploy/` | Deploy configuration to iDempiere containers |
-| `install-idempiere/` | iDempiere installer (NixOS + Ansible) |
-| `wi-*/` | Work instruction documentation |
+This directory is a **meta-workspace**: each top-level folder is its own
+independent git repository, not a submodule. The root `AGENTS.md` is a symlink
+to `repo-utils/AGENTS.md` (recreated by `repo-utils/agents-symlink.sh`), so edit
+the real file under `repo-utils/`.
+
+Repos are cloned and kept current by `repo-utils` — see its `README.md` for the
+sync scripts and prerequisites.
+
+**External repos are welcome.** Not every folder here belongs to `oeig-io`
+(some are upstream sources we keep for reference). Clone any external repo you
+need into the workspace: `repo-utils/git-clone-and-pull-all.sh` only *creates*
+repos from the `oeig-io` org, but its `git pull` pass keeps **every** repo
+present in the workspace up to date — external ones included. So add what you
+need; sync will maintain it. See "Additional Helpful Repos" in
+`repo-utils/README.md`.
+
+## How We Write and Communicate
+
+`wi-base/WORK_INSTRUCTIONS.md` is the governing standard for everything we write
+and communicate — documentation, work instructions, skills, READMEs, commit
+messages, and the prose in answers. Read it before authoring or editing any of
+these, and treat it as authoritative when its guidance conflicts with habit.
+
+Its core tenets apply everywhere in this workspace:
+
+- **DRY** — remove redundancy; reference related information by name instead of
+  repeating it (this AGENTS.md is itself an example).
+- **Get to the point, then the big picture, then the details** — open with
+  "The purpose of this ... is to ...", explain why it matters, then supply only
+  the detail needed for success. Stay friendly.
+- **Reference over repetition** — link to the owning doc; never copy it.
+- **No real user or company data** in anything committed to a public repo — use
+  generic placeholders (`ACME`, `example.com`, `[CLIENT_ID]`).
+- **Lowercase-dashed filenames** and **YAML frontmatter** for tool/skill files.
+
+When in doubt about format, naming, structure, or tone, defer to
+`wi-base/WORK_INSTRUCTIONS.md`.
+
+## Finding Your Way Around
+
+Repos are self-locating by name prefix rather than a maintained list:
+
+| Prefix / name | What it holds |
+|---------------|---------------|
+| `wi-*` | Work instructions and AI skills (see `wi-base/WORK_INSTRUCTIONS.md`) |
+| `install-*` | Application payloads built as a 1:N factory (e.g. `install-idempiere`) |
+| `host-*` | Dedicated 1:1 application payloads with couriered secrets |
+| `idempiere-*` | iDempiere core, REST, docs, plugins, and go-live deploy |
+| `container-management` | Create/manage NixOS Incus containers (`install-*` and `host-*`) |
+| `incus`, `netbird` | Infrastructure: containers/VMs and the mesh network |
 | `corporate/` | Internal company documentation |
 
-## Common Workflows
+**Each repo owns its own instructions.** Before working inside a repo, read its
+`AGENTS.md`, `CLAUDE.md`, and/or `README.md` — that is where the authoritative,
+current detail lives. Start with these:
 
-### Create new iDempiere container with deployment
+- `container-management/` — creating and orchestrating containers
+- `idempiere-golive-deploy/` — deploying, resetting, and verifying iDempiere
+  containers (deploy/reset workflows, timeouts, audit logs, status checks,
+  destructive-action rules)
 
-```bash
-# 1. Create container (runs install.sh inside)
-cd container-management && ./launch.sh configs/idempiere.conf id-01
+## Cross-Cutting Principles
 
-# 2. Verify service is ready (HTTP 405 = ready)
-incus exec id-01 -- curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/v1/auth/tokens
+These apply everywhere; repo docs hold the specifics.
 
-# 3. Run deployment (10 minute timeout)
-cd idempiere-golive-deploy && ./deploy.sh id-01
-```
-
-### Verify deployment completion
-
-```bash
-# Check tenant was created
-incus exec id-01 -- su - idempiere -c "psqli -c \"SELECT name, value FROM adempiere.ad_client WHERE ad_client_id = 1000000;\""
-
-# Check users exist
-incus exec id-01 -- su - idempiere -c "psqli -c \"SELECT name, email FROM adempiere.ad_user WHERE name LIKE 'Bearly%';\""
-```
-
-### Reset iDempiere database
-
-Use this workflow to restore a container to the seed database state. This is useful when deployment fails or you need to start fresh.
-
-```bash
-# Reset database (destructive - will be prompted to confirm)
-cd idempiere-golive-deploy && ./reset.sh id-01
-
-# After reset completes, reapply go-live configuration
-./deploy.sh id-01
-```
-
-### Verify container status before taking action
-
-```bash
-# Check if container exists and is running
-incus list id-01 --format csv -c n,s
-
-# Check if service is already ready (don't re-run deploy if complete)
-incus exec id-01 -- curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/v1/auth/tokens
-```
-
-## Mistakes to Avoid
-
-### Don't re-run completed commands
-
-If a long-running command (like deploy.sh) appears to complete, verify the result before running again. Check:
-- Audit log for START/STOP pairs
-- Database for expected records
-- Service health endpoint
-
-### Don't assume timeout means failure
-
-A command that times out may have actually completed. Always verify actual state:
-- Check container is still running
-- Query database for expected data
-- Check service health
-
-### Confirm before destructive operations
-
-Before:
-- Deleting containers (`incus delete`)
-- Resetting databases (`reset.sh`)
-- Rebuilding systems (`nixos-rebuild`)
-
-Verify with user explicitly.
-
-## My Preferences
-
-### Code and file standards
-
-- Follow `wi-base/WORK_INSTRUCTIONS.md` for documentation
-- Use YAML frontmatter for tool files (see WORK_INSTRUCTIONS.md section on Tool Frontmatter Standards)
-- Keep files lowercase with dashes: `my-file-name.md`
-
-### Timeout guidelines
-
-When invoking these scripts, always set the bash tool `timeout` parameter to **600 seconds** (10 minutes):
-
-- `container-management/launch.sh` (container creation)
-- `idempiere-golive-deploy/deploy.sh` (full deployment)
-- `idempiere-golive-deploy/test.sh` (test runs)
-
-Other command types:
-
-| Command type | Typical timeout |
-|--------------|-----------------|
-| `launch.sh` / `deploy.sh` / `test.sh` | 600 seconds |
-| Single deploy script | 2 minutes |
-| Database queries | 30 seconds |
-
-If one of these scripts times out, do not assume failure — verify actual
-state (see "Don't assume timeout means failure" above) before re-running.
+- **Confirm before destructive operations.** Verify with the user before
+  deleting containers (`incus delete`), resetting databases (`reset.sh`), or
+  rebuilding systems (`nixos-rebuild`). See the owning repo for the exact rules.
+- **A timeout is not a failure.** Long-running scripts can outlast a tool
+  timeout while still completing. Verify actual state (service health, expected
+  records, audit logs) before re-running — never re-run a completed command
+  blindly.
 
 ## Enabling/Disabling Extensions and Skills
 
-Use `pi config` to toggle extensions and skills on or off for the current session. This opens an interactive TUI where you can check/uncheck resources with `space`.
+Use `pi config` to toggle extensions and skills on or off for the current
+session. This opens an interactive TUI where you check/uncheck resources with
+`space`.
 
 ```bash
 pi config
 ```
 
-Common use case: enable/disable MCP (`@0xkobold/pi-mcp`) on a per-session basis. MCP is installed but disabled by default — use `pi config` to enable it when needed.
-
-## Useful Commands
-
-```bash
-# List all id-* containers
-incus list --format csv -c n | grep '^id-'
-
-# Check container health
-incus exec <container> -- curl -s http://localhost:8080/api/v1/auth/tokens
-
-# Get container IP
-incus list <container> -c 4
-
-# Execute as idempiere user
-incus exec <container> -- su - idempiere -c "<command>"
-```
+Common use: enable/disable MCP (`@0xkobold/pi-mcp`) per session. MCP is installed
+but disabled by default — enable it with `pi config` when needed.

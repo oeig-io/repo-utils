@@ -3,8 +3,6 @@
 #
 # mcpc is a universal CLI client for the Model Context Protocol (MCP):
 #   https://github.com/apify/mcpc
-# Install it with:
-#   npm install -g @apify/mcpc
 #
 # This script runs `mcpc help --skill` and writes the output to
 # wi-mcpc/mcpc-tool.md so that wi-base/refresh-skills.sh symlinks it into
@@ -14,8 +12,10 @@
 # to refresh the snapshot (mcpc's built-in skill always matches the installed
 # version; this script captures that snapshot into the repo).
 #
-# Prerequisites:
-#   - mcpc CLI installed: npm install -g @apify/mcpc
+# If the mcpc CLI (or npm) is not already on PATH, this script installs the
+# missing prerequisite automatically so a fresh checkout always produces the
+# skill without manual setup:
+#   npm install -g @apify/mcpc
 #
 # Usage: ./repo-utils/install-mcpc-skill.sh
 # Exit codes: 0 = success, non-zero = error
@@ -28,11 +28,19 @@ SKILL_FILE="$SKILL_DIR/mcpc-tool.md"
 README_FILE="$SKILL_DIR/README.md"
 
 # --- prerequisites -----------------------------------------------------------
+# Auto-install mcpc so the script is self-bootstrapping on a fresh checkout.
+# mcpc ships as the npm package @apify/mcpc; if it is absent from PATH we
+# install it via npm. Node.js/npm itself is a hard prerequisite — if npm is
+# missing we fail and let the operator install Node.js by hand.
+
+if ! command -v npm >/dev/null 2>&1; then
+    echo "Error: npm not found on PATH. Install Node.js/npm first." >&2
+    exit 1
+fi
 
 if ! command -v mcpc >/dev/null 2>&1; then
-    echo "Error: mcpc CLI not found on PATH." >&2
-    echo "Install it with: npm install -g @apify/mcpc" >&2
-    exit 1
+    echo "mcpc CLI not found on PATH; installing @apify/mcpc via npm..." >&2
+    npm install -g @apify/mcpc
 fi
 
 mcpc_version=$(mcpc --version 2>/dev/null || echo "unknown")

@@ -81,7 +81,7 @@ These apply everywhere; repo docs hold the specifics.
   timeout while still completing. Verify actual state (service health, expected
   records, audit logs) before re-running — never re-run a completed command
   blindly.
-- **Search our chat history, not just the filesystem.** Zulip is a system of
+- **Search, not just the filesystem.** Zulip is a system of
   record — decisions and research often live only in a thread. When a `grep`
   comes up short, or the answer may have been discussed rather than committed,
   also search Zulip (see the `zulip-api` skill / `pi-zulip` search tools).

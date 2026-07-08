@@ -56,11 +56,12 @@ See [git-shortcuts-tool](git-shortcuts-tool/SKILL.md) for the `gs` (git status) 
 
 ### Reading git-status-all.sh colors
 
-The purpose of the colors is to let you scan for **red = action needed** without reading every line. Each repo header also shows origin's org in parentheses; a non-`oeig-io` org (e.g. a personal fork) is colored so it stands out at a glance.
+The purpose of the colors is to let you scan for **red = action needed** without reading every line. Each repo header also shows origin's org in parentheses; a non-`oeig-io` org (e.g. a personal fork) is colored so it stands out at a glance — deliberately in **blue**, not yellow, so the eye doesn't read it as the `[ahead]`/`[behind]` warning.
 
 | Signal | Color | Meaning |
 |--------|-------|---------|
 | On home branch, up to date, clean | none | nothing to do |
+| `(non-oeig-io org)` in section header | blue | origin points elsewhere (e.g. personal fork) — informational, not a warning |
 | `[behind N]` / `[ahead N]` | yellow | current branch drifted from its upstream |
 | `[on <branch>, not <home>]` | red | parked off home base — finish up and `git switch` back |
 | `[<home> behind N]` | red | your local home branch is stale even while you sit elsewhere |

@@ -78,14 +78,15 @@ for dir in */ .*/; do
         repo_name="${dir%/}"
 
         # Label the header with origin's org so a fork (non-EXPECTED_ORG) stands
-        # out without adding a line. Unexpected orgs are colored to draw the eye.
+        # out without adding a line. Unexpected orgs use COLOR_FORK (blue) so they
+        # don't read like the COLOR_WARNING yellow used for [ahead]/[behind].
         org=$(get_org "$dir")
         if [ -z "$org" ]; then
             org_label=""
         elif [ "$org" = "$EXPECTED_ORG" ]; then
             org_label=" (${org})"
         else
-            org_label=" ${COLOR_WARNING}(${org})${COLOR_RESET}${COLOR_INFO}"
+            org_label=" ${COLOR_FORK}(${org})${COLOR_RESET}${COLOR_INFO}"
         fi
         echo "${COLOR_INFO}${DELIMITER} ${repo_name}${org_label} ${DELIMITER}${COLOR_RESET}"
 

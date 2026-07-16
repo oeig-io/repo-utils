@@ -82,12 +82,15 @@ These apply everywhere; repo docs hold the specifics.
   records, audit logs) before re-running — never re-run a completed command
   blindly.
 - **Return to the default branch when a change is done.** The fork/branch/PR
-  flow is welcome, but a repo left parked on a feature branch quietly stops
-  receiving updates to its default branch. When your change is pushed and the PR
-  is open, switch back to the primary repo's default branch (`git switch main`)
-  so you keep pulling updates. `repo-utils/git-status-all.sh` colors this: a repo
-  off its home branch, or a home branch that has fallen behind, shows red — see
-  its signals and per-repo overrides in `repo-utils/README.md`.
+  flow is documented in `repo-utils/README.md` → "Recommended fork/PR remote
+  setup" (add a fork remote, branch from an up-to-date home base, push to the
+  fork, `gh pr create --repo <org>/<repo> --base main`). A repo left parked on a
+  feature branch quietly stops receiving updates to its default branch, so when
+  your change is pushed and the PR is open, switch back to the primary repo's
+  default branch (`git switch main`) so you keep pulling updates.
+  `repo-utils/git-status-all.sh` colors this: a repo off its home branch, or a
+  home branch that has fallen behind, shows red — see its signals and per-repo
+  overrides in `repo-utils/README.md`.
 - **Search, not just the filesystem.** Zulip is a system of
   record — decisions and research often live only in a thread. When a `grep`
   comes up short, or the answer may have been discussed rather than committed,

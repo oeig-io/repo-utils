@@ -81,13 +81,10 @@ These apply everywhere; repo docs hold the specifics.
   timeout while still completing. Verify actual state (service health, expected
   records, audit logs) before re-running — never re-run a completed command
   blindly.
-- **Return to the default branch when a change is done.** The fork/branch/PR
-  flow is welcome, but a repo left parked on a feature branch quietly stops
-  receiving updates to its default branch. When your change is pushed and the PR
-  is open, switch back to the primary repo's default branch (`git switch main`)
-  so you keep pulling updates. `repo-utils/git-status-all.sh` colors this: a repo
-  off its home branch, or a home branch that has fallen behind, shows red — see
-  its signals and per-repo overrides in `repo-utils/README.md`.
+- **Branch handoff at session end — match the user's working context, not just the git state.** A repo left parked on a feature branch quietly stops receiving updates to its default branch (see `repo-utils/git-status-all.sh`), so ordinarily a finished change should be merged and the repo returned to its default branch. Two exceptions:
+  - **Draft PRs and pre-review work.** If the user said "not sending for review yet," "draft PR," or otherwise indicated the work is being held for review or edit, keep the working tree on the feature branch. The user needs the files in their working tree to review and edit; switching to the default branch hides the work and breaks the review loop. Mark the PR ready and request reviewers only when the user says so.
+  - **Mid-session on a different feature branch.** If the user was already on a feature branch when the session started, return to that branch — not main. The user may have unrelated work-in-progress there (a stash, in-progress edits) that should not be orphaned.
+  When in doubt, ask before switching.
 - **Search, not just the filesystem.** Zulip is a system of
   record — decisions and research often live only in a thread. When a `grep`
   comes up short, or the answer may have been discussed rather than committed,

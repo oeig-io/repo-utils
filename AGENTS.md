@@ -95,6 +95,12 @@ These apply everywhere; repo docs hold the specifics.
 - **Commit often, but never push without explicit approval.** Local commits are
   encouraged — squash them into meaningful contributions as you go — but pushing
   on a user's behalf always requires their permission.
+- **Keep temp files private on shared servers.** Scratch and temporary files
+  go under your private `TMPDIR` (a mode-`0700` `/tmp/$USER` directory on
+  multi-user hosts), never directly into `/tmp/`. pi, opencode, and claude all
+  honor `TMPDIR` automatically; for manual scratch space use `mktemp -d` or a
+  `$TMPDIR/*-$$` subdir. See the `host-ai-user` shared-`/tmp` standard for the
+  authoritative detail.
 
 ## Enabling/Disabling Extensions and Skills
 

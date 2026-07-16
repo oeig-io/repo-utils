@@ -92,6 +92,9 @@ These apply everywhere; repo docs hold the specifics.
   record — decisions and research often live only in a thread. When a `grep`
   comes up short, or the answer may have been discussed rather than committed,
   also search Zulip (see the `zulip-api` skill / `pi-zulip` search tools).
+- **Commit often but do not push** without permission. Local commits are encourages.
+  Make use of squashing local commits into meaninful contributions. Do not push
+  on a user's behalf without explicit approval.
 
 ## Enabling/Disabling Extensions and Skills
 

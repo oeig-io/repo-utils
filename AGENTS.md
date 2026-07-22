@@ -22,8 +22,11 @@ sync scripts and prerequisites.
 need into the workspace: `repo-utils/git-clone-and-pull-all.sh` only *creates*
 repos from the `oeig-io` org, but its `git pull` pass keeps **every** repo
 present in the workspace up to date — external ones included. So add what you
-need; sync will maintain it. See "Additional Helpful Repos" in
+need; sync will maintain it. See “Additional Helpful Repos” in
 `repo-utils/README.md`.
+
+AI skills are deployed and kept current by `wi-base/refresh-skills.sh` — run it
+alongside the repo sync so the skill index mirrors the latest `wi-*` content.
 
 ## How We Write and Communicate
 

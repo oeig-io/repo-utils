@@ -93,6 +93,8 @@ git switch main
 
 With `origin` canonical, the header org label stays `oeig-io`, `[main behind N]` keeps warning you when the canonical branch moves, and `[on my-change, not main]` reminds you to switch back once the PR is filed.
 
+> 🔗 **Reference** — To avoid parking a repo on a feature branch at all, do the branch work in a git worktree: the primary clone stays on home base (still syncing) while the branch lives in a dedicated sibling directory beside the workspace. See the `git-worktree` skill (`wi-github`).
+
 Both scripts operate from the parent directory (where repositories should live).
 
 ## Additional Helpful Repos

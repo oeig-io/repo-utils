@@ -73,11 +73,11 @@ The purpose of the colors is to let you scan for **red = action needed** without
 
 The purpose of this setup is to contribute through a fork while keeping `origin` pointed at the canonical repo. This is important because `git-status-all.sh` measures "home base" and "behind" against `origin` — if you re-point `origin` at your fork, those signals stop tracking the canonical repo and the guardrails go quiet.
 
-So leave `origin` alone (repo-utils cloned it correctly) and add your fork as a *separate* named remote:
+So leave `origin` alone (repo-utils cloned it correctly) and add your fork as a *separate* named remote. Let `gh` create both the fork and the remote — it emits a URL in whichever protocol `gh` is configured for, which is the only form that authenticates on hosts where `gh` is the sole GitHub credential:
 
 ```bash
-# origin stays canonical (oeig-io); add your fork under your username
-git remote add fork git@github.com:<your-username>/<repo>.git
+# origin stays canonical (oeig-io); the fork lands on its own remote
+gh repo fork --remote --remote-name fork
 
 # branch from an up-to-date home base, then push the branch to your fork
 git switch main && git pull
@@ -85,11 +85,15 @@ git switch -c my-change
 git push -u fork my-change
 
 # open the PR against the canonical repo
-gh pr create --repo <org>/<repo> --base main
+gh pr create --repo <org>/<repo> --base main --head "$(gh api user -q .login):my-change"
 
 # when the PR is open, return to home base so you keep pulling updates
 git switch main
 ```
+
+> ⚠️ **Warning** — `--remote-name fork` is not optional. By default `gh repo fork` renames `origin` to `upstream` and claims `origin` for your fork — precisely the re-pointing this setup exists to prevent.
+
+`--head <user>:<branch>` names the fork that holds the commits, so `gh` skips its interactive "where should I push this?" prompt. Combined with `--repo` it makes the command safe to run unattended.
 
 With `origin` canonical, the header org label stays `oeig-io`, `[main behind N]` keeps warning you when the canonical branch moves, and `[on my-change, not main]` reminds you to switch back once the PR is filed.
 

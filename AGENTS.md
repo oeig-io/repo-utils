@@ -98,9 +98,15 @@ These apply everywhere; repo docs hold the specifics.
   record — decisions and research often live only in a thread. When a `grep`
   comes up short, or the answer may have been discussed rather than committed,
   also search Zulip (see the `zulip-api` skill / `pi-zulip` search tools).
-- **Commit often, but never push without explicit approval.** Local commits are
-  encouraged — squash them into meaningful contributions as you go — but pushing
-  on a user's behalf always requires their permission.
+- **Commit often; never push, and never choose how a change lands, without
+  explicit approval.** Local commits are encouraged — squash them into
+  meaningful contributions as you go. Pushing on a user's behalf always requires
+  their permission, and when more than one landing route is available (a PR from
+  a fork/branch, or a direct push to the default branch), *ask which one they
+  want rather than inferring it from their access level*. Write access is not
+  consent to use it. On `ai-user-00` the question is usually moot — non-admins
+  have only the fork/PR route (see `host-ai-user/AGENTS.md` → "Suggesting
+  Changes").
 - **Keep temp files private on shared servers.** Scratch and temporary files
   go under your private `TMPDIR` (a mode-`0700` `/tmp/$USER` directory on
   multi-user hosts), never directly into `/tmp/`. pi, opencode, and claude all

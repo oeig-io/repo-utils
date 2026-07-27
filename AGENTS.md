@@ -89,7 +89,10 @@ These apply everywhere; repo docs hold the specifics.
   output nobody needs to read, say so and *ask*: "want me to hand this to
   sub-agents?" Propose the shape — how many, what each owns, whether each needs
   its own checkout — and let the user choose. Never spawn one unasked, and never
-  force the pattern on work that is faster done inline. The mechanics live in
+  force the pattern on work that is faster done inline. A capability gap counts
+  too, and there the answer is usually obvious: a text-only model can hand an
+  image to `pi-headless-one-shot`, whose default sub-agent model reads it — do
+  the read-only look and say so rather than refusing. The mechanics live in
   the `pi-headless-tui` skill (`wi-pi`) for the sub-agents themselves and
   `git-worktree` (`wi-github`) for keeping their checkouts from colliding.
 - **Return to the default branch when a change is done.** The fork/branch/PR

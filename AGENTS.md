@@ -84,6 +84,14 @@ These apply everywhere; repo docs hold the specifics.
   timeout while still completing. Verify actual state (service health, expected
   records, audit logs) before re-running — never re-run a completed command
   blindly.
+- **Offer to delegate parallelizable work.** When a task splits into
+  independent pieces, runs long, or would flood this session's context with
+  output nobody needs to read, say so and *ask*: "want me to hand this to
+  sub-agents?" Propose the shape — how many, what each owns, whether each needs
+  its own checkout — and let the user choose. Never spawn one unasked, and never
+  force the pattern on work that is faster done inline. The mechanics live in
+  the `pi-headless-tui` skill (`wi-pi`) for the sub-agents themselves and
+  `git-worktree` (`wi-github`) for keeping their checkouts from colliding.
 - **Return to the default branch when a change is done.** The fork/branch/PR
   flow is documented in `repo-utils/README.md` → "Recommended fork/PR remote
   setup" (add a fork remote, branch from an up-to-date home base, push to the

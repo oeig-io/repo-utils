@@ -70,8 +70,16 @@ if [[ ! "$skill_name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
     exit 1
 fi
 
-if [[ "$skill_name" != "mcpc" ]]; then
-    echo "Warning: expected skill name 'mcpc' but got '$skill_name'." >&2
+# Workspace convention requires the type suffix on the published skill name
+# (refresh-skills.sh audits this). Rewrite 'mcpc' -> 'mcpc-tool' before write.
+if [[ "$skill_name" == "mcpc" ]]; then
+    sed -i '0,/^name: mcpc$/{s|^name: mcpc$|name: mcpc-tool|}' "$tmp_file"
+    skill_name="mcpc-tool"
+    echo "Note: rewrote name 'mcpc' -> 'mcpc-tool' (workspace convention requires type suffix)"
+fi
+
+if [[ "$skill_name" != "mcpc-tool" ]]; then
+    echo "Warning: expected skill name 'mcpc-tool' but got '$skill_name'." >&2
 fi
 
 mkdir -p "$SKILL_DIR"

@@ -45,10 +45,34 @@ Its core tenets apply everywhere in this workspace:
 - **Reference over repetition** — link to the owning doc; never copy it.
 - **No real user or company data** in anything committed to a public repo — use
   generic placeholders (`ACME`, `example.com`, `[CLIENT_ID]`).
-- **Lowercase-dashed filenames** and **YAML frontmatter** for tool/skill files.
+- **Lowercase-dashed filenames** and **YAML frontmatter** for skill files.
 
 When in doubt about format, naming, structure, or tone, defer to
 `wi-base/WORK_INSTRUCTIONS.md`.
+
+## Skills: `-tool` and `-task`
+
+Every skill in the index ends in `-tool` or `-task`, and the suffix tells you
+what you are about to load. This is the one definition repeated here rather than
+referenced, because you need it *before* you can choose a skill; the full
+treatment lives in `wi-base/WORK_INSTRUCTIONS.md` => "Work Instruction Types".
+
+- **`-tool` — one resource.** How to reach a single system and operate it:
+  access, invocation, the calls and flags that work (`zulip-api-tool`,
+  `incus-container-management-tool`).
+- **`-task` — one outcome.** A repeatable procedure that coordinates several
+  tools, carrying the sequence, decision points, and reporting OEIG expects
+  (`backup-audit-task`). A task names its tools; it never restates them.
+
+**Choosing.** When a task exists for what you were asked to do, start there — it
+names the tools in the right order and carries judgment a tool cannot. Load a
+tool directly when you already know the system and need only its mechanics.
+
+**Authoring.** Mechanics of a system belong in its tool; sequence, judgment, and
+output belong in the task. Copying tool steps into a task is the failure mode —
+reference instead. Detail true of exactly one instance (a container, a host, a
+client) is a **prompt**, and lives with that instance in `host-*` or `install-*`
+— never in a `wi-*` repo.
 
 ## Finding Your Way Around
 

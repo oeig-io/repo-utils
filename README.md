@@ -60,14 +60,15 @@ The purpose of the colors is to let you scan for **red = action needed** without
 
 | Signal | Color | Meaning |
 |--------|-------|---------|
-| On home branch, up to date, clean | none | nothing to do |
+| On home ref, up to date, clean | none | nothing to do |
 | `(non-oeig-io org)` in section header | blue | origin points elsewhere (e.g. personal fork) — informational, not a warning |
 | `[behind N]` / `[ahead N]` | yellow | current branch drifted from its upstream |
-| `[on <branch>, not <home>]` | red | parked off home base — finish up and `git switch` back |
+| `[not at <home>]` | red | parked off home base — finish up and `git switch` back |
 | `[<home> behind N]` | red | your local home branch is stale even while you sit elsewhere |
+| `[pinned at <tag>; <branch> N ahead]` | cyan | repo is pinned to a release tag — informational, and N is how far the default branch has moved past the pin |
 | `[changes]` | red | uncommitted local changes |
 
-"Home base" is the remote's default branch (usually `main`). External repos that intentionally track a different branch — for example `idempiere-core` pinned to our production `release-13` — are declared in `git-utils.conf` via `EXPECTED_BRANCH` so they read as clean rather than red. Set `EXPECTED_ORG` there to the org that owns your canonical repos.
+"Home base" is the remote's default branch (usually `main`). External repos whose reference point is something else are declared in `git-utils.conf` via `EXPECTED_REF`: a non-default branch (`idempiere-core` on our production `release-13`) or a release tag the repo is pinned to with `git switch --detach <tag>` (`netbird` at `v0.76.3`). Either way they read as clean rather than red. Set `EXPECTED_ORG` there to the org that owns your canonical repos.
 
 ### Recommended fork/PR remote setup
 

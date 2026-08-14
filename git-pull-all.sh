@@ -25,7 +25,16 @@ for dir in */ .*/; do
         branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
         echo "${COLOR_INFO}${DELIMITER} Pulling $repo_name ${DELIMITER}${COLOR_RESET}"
         echo "Branch: ${branch}"
-        git -C "$dir" pull
+        if [ "$branch" = "HEAD" ]; then
+            # Detached checkout (e.g. a repo pinned at a release tag): `git
+            # pull` would fail with "not currently on a branch". Fetch instead
+            # so refs and tags stay current without moving HEAD.
+            echo "Detached at $(git -C "$dir" describe --tags --exact-match HEAD 2>/dev/null \
+                || git -C "$dir" rev-parse --short HEAD); fetching only"
+            git -C "$dir" fetch --prune --tags
+        else
+            git -C "$dir" pull
+        fi
         echo
     fi
 done

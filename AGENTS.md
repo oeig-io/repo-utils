@@ -126,7 +126,8 @@ These apply everywhere; repo docs hold the specifics.
   feature branch quietly stops receiving updates to its default branch, so when
   your change is pushed and the PR is open, switch back to the primary repo's
   default branch (`git switch main`) so you keep pulling updates.
-  `repo-utils/git-status-all.sh` colors this: a repo off its home branch, or a
+  `repo-utils/git-status-all.sh` colors this: a repo off its home ref (the
+  default branch, or the branch/tag a repo is deliberately pinned to), or a
   home branch that has fallen behind, shows red — see its signals and per-repo
   overrides in `repo-utils/README.md`.
 - **Search, not just the filesystem.** Zulip is a system of

@@ -31,18 +31,13 @@ get_tracking_status() {
     fi
 }
 
-# Resolve the repo's home branch: an explicit override from EXPECTED_BRANCH,
-# else the remote's default branch, falling back to main/master.
-get_home_branch() {
-    local dir="$1" repo="$2" def
-    if [ -n "${EXPECTED_BRANCH[$repo]}" ]; then
-        echo "${EXPECTED_BRANCH[$repo]}"
-        return
-    fi
+# Resolve the repo's default branch: the remote's HEAD, falling back to
+# main/master if present locally.
+get_default_branch() {
+    local dir="$1" def b
     def=$(git -C "$dir" symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null \
           | sed 's@^refs/remotes/origin/@@')
     if [ -z "$def" ]; then
-        local b
         for b in main master; do
             if git -C "$dir" show-ref --verify --quiet "refs/heads/$b"; then
                 def="$b"
@@ -53,9 +48,21 @@ get_home_branch() {
     echo "$def"
 }
 
+# Resolve the repo's home ref: an explicit override from EXPECTED_REF,
+# else the default branch. The override may name a branch (an external
+# repo tracking a release branch) or a tag (pinned to an upstream release).
+get_home_ref() {
+    local dir="$1" repo="$2"
+    if [ -n "${EXPECTED_REF[$repo]}" ]; then
+        echo "${EXPECTED_REF[$repo]}"
+        return
+    fi
+    get_default_branch "$dir"
+}
+
 # How far the LOCAL home branch is behind its own upstream, independent of HEAD.
 # This surfaces "home base has updates you have not pulled" even while parked on
-# a feature branch.
+# a feature branch. A tag home ref has no upstream, so this no-ops for pins.
 get_home_behind() {
     local dir="$1" home="$2" up behind
     [ -z "$home" ] && return
@@ -90,12 +97,19 @@ for dir in */ .*/; do
         fi
         echo "${COLOR_INFO}${DELIMITER} ${repo_name}${org_label} ${DELIMITER}${COLOR_RESET}"
 
-        # Get the current branch (no color for branch details)
+        # Get the current branch (no color for branch details). A detached
+        # HEAD (repo checked out at a release tag) shows the tag or short
+        # commit instead of the bare "HEAD".
         branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
+        if [ "$branch" = "HEAD" ]; then
+            branch="detached at $(git -C "$dir" describe --tags --exact-match HEAD 2>/dev/null \
+                  || git -C "$dir" rev-parse --short HEAD)"
+        fi
         echo "Branch: ${branch}"
 
-        # Resolve home base and the real upstream of the current branch
-        home_branch=$(get_home_branch "$dir" "$repo_name")
+        # Resolve home base (default branch or EXPECTED_REF override) and the
+        # real upstream of the current branch
+        home_ref=$(get_home_ref "$dir" "$repo_name")
         upstream_ref=$(git -C "$dir" rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null)
 
         # Get tracking status (behind/ahead of current branch's upstream)
@@ -110,15 +124,32 @@ for dir in */ .*/; do
             line_suffix="${line_suffix}${COLOR_WARNING}${tracking_status}${COLOR_RESET}"
         fi
 
-        # RED: parked off home base — the state that leads to orphaned branches
-        if [ -n "$home_branch" ] && [ "$branch" != "$home_branch" ]; then
-            line_suffix="${line_suffix}${COLOR_CHANGES} [on ${branch}, not ${home_branch}]${COLOR_RESET}"
+        # RED: parked off home base — the state that leads to orphaned branches.
+        # Compared by commit so a tag home base works: a checkout parked at the
+        # tag reads clean, anything else flags red.
+        if [ -n "$home_ref" ]; then
+            home_commit=$(git -C "$dir" rev-parse --quiet --verify "${home_ref}^{commit}" 2>/dev/null)
+            head_commit=$(git -C "$dir" rev-parse HEAD 2>/dev/null)
+            if [ -z "$home_commit" ] || [ "$head_commit" != "$home_commit" ]; then
+                line_suffix="${line_suffix}${COLOR_CHANGES} [not at ${home_ref}]${COLOR_RESET}"
+            # CYAN: tag-pinned — deliberate staleness, so informational. Shows
+            # how far the default branch has moved past the pin, so a newer
+            # release is visible without the pin reading as a problem.
+            elif git -C "$dir" for-each-ref --format='%(refname:short)' refs/tags | grep -qx "$home_ref"; then
+                default_branch=$(get_default_branch "$dir")
+                pin_behind=$(git -C "$dir" rev-list --count "${home_ref}..origin/${default_branch}" 2>/dev/null)
+                if [ -n "${default_branch}" ] && [ -n "${pin_behind}" ]; then
+                    line_suffix="${line_suffix}${COLOR_INFO} [pinned at ${home_ref}; ${default_branch} ${pin_behind} ahead]${COLOR_RESET}"
+                else
+                    line_suffix="${line_suffix}${COLOR_INFO} [pinned at ${home_ref}]${COLOR_RESET}"
+                fi
+            fi
         fi
 
         # RED: home base is stale — fires even while on a feature branch
-        home_behind=$(get_home_behind "$dir" "$home_branch")
+        home_behind=$(get_home_behind "$dir" "$home_ref")
         if [ -n "$home_behind" ]; then
-            line_suffix="${line_suffix}${COLOR_CHANGES} [${home_branch} behind ${home_behind}]${COLOR_RESET}"
+            line_suffix="${line_suffix}${COLOR_CHANGES} [${home_ref} behind ${home_behind}]${COLOR_RESET}"
         fi
 
         # RED: uncommitted local changes

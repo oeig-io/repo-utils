@@ -101,7 +101,9 @@ for dir in */ .*/; do
         # HEAD (repo checked out at a release tag) shows the tag or short
         # commit instead of the bare "HEAD".
         branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
+        detached=0
         if [ "$branch" = "HEAD" ]; then
+            detached=1
             branch="detached at $(git -C "$dir" describe --tags --exact-match HEAD 2>/dev/null \
                   || git -C "$dir" rev-parse --short HEAD)"
         fi
@@ -139,9 +141,9 @@ for dir in */ .*/; do
                 default_branch=$(get_default_branch "$dir")
                 pin_behind=$(git -C "$dir" rev-list --count "${home_ref}..origin/${default_branch}" 2>/dev/null)
                 if [ -n "${default_branch}" ] && [ -n "${pin_behind}" ]; then
-                    line_suffix="${line_suffix}${COLOR_INFO} [pinned at ${home_ref}; ${default_branch} ${pin_behind} ahead]${COLOR_RESET}"
+                    line_suffix="${line_suffix}${COLOR_INFO} [pinned; ${default_branch} ${pin_behind} ahead]${COLOR_RESET}"
                 else
-                    line_suffix="${line_suffix}${COLOR_INFO} [pinned at ${home_ref}]${COLOR_RESET}"
+                    line_suffix="${line_suffix}${COLOR_INFO} [pinned]${COLOR_RESET}"
                 fi
             fi
         fi
@@ -157,7 +159,13 @@ for dir in */ .*/; do
             line_suffix="${line_suffix}${COLOR_CHANGES} [changes]${COLOR_RESET}"
         fi
 
-        echo "## ${branch}...${upstream_ref:-(no upstream)}${line_suffix}"
+        # A detached HEAD has no upstream by definition — restating it adds
+        # noise, so the tracking line shows just where HEAD is.
+        if [ "$detached" -eq 1 ]; then
+            echo "## ${branch}${line_suffix}"
+        else
+            echo "## ${branch}...${upstream_ref:-(no upstream)}${line_suffix}"
+        fi
         if [ -n "$file_status" ]; then
             echo "$file_status"
         fi

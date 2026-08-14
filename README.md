@@ -65,7 +65,7 @@ The purpose of the colors is to let you scan for **red = action needed** without
 | `[behind N]` / `[ahead N]` | yellow | current branch drifted from its upstream |
 | `[not at <home>]` | red | parked off home base — finish up and `git switch` back |
 | `[<home> behind N]` | red | your local home branch is stale even while you sit elsewhere |
-| `[pinned at <tag>; <branch> N ahead]` | cyan | repo is pinned to a release tag — informational, and N is how far the default branch has moved past the pin |
+| `[pinned; <branch> N ahead]` | cyan | repo is pinned to a release tag — informational, and N is how far the default branch has moved past the pin |
 | `[changes]` | red | uncommitted local changes |
 
 "Home base" is the remote's default branch (usually `main`). External repos whose reference point is something else are declared in `git-utils.conf` via `EXPECTED_REF`: a non-default branch (`idempiere-core` on our production `release-13`) or a release tag the repo is pinned to with `git switch --detach <tag>` (`netbird` at `v0.76.3`). Either way they read as clean rather than red. Set `EXPECTED_ORG` there to the org that owns your canonical repos.

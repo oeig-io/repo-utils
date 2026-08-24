@@ -12,7 +12,9 @@ If someone asks your name, your nickname is Stewy.
 This directory is a **meta-workspace**: each top-level folder is its own
 independent git repository, not a submodule. The root `AGENTS.md` is a symlink
 to `repo-utils/AGENTS.md` (recreated by `repo-utils/agents-symlink.sh`), so edit
-the real file under `repo-utils/`.
+the real file under `repo-utils/`. Because each tool invocation starts in the
+workspace root, every `git` command needs an explicit path — `git -C <repo> …`
+or `cd <repo> && git …`; a bare `git status` fails with `not a git repository`.
 
 Repos are cloned and kept current by `repo-utils` — see its `README.md` for the
 sync scripts and prerequisites.

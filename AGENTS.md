@@ -105,6 +105,17 @@ current detail lives. Start with these:
 
 These apply everywhere; repo docs hold the specifics.
 
+- **Never read a secret into context.** Most keys come from OpenBao, but a file
+  can still `export SOME_API_KEY=...` in plaintext, and anything you read lands
+  in a logged session. Treat any `.sh` file with `env` in its name
+  (`*env*.sh`, e.g. `cloudflared-load-env.sh`) as secret-bearing: never `read`,
+  `cat`, or `source`-and-print it. Instead (a) confirm it exports with
+  `grep -cE '^[[:space:]]*export[[:space:]]' FILE` (prints a count), then
+  (b) list the variable names with
+  `grep -oE '^[[:space:]]*export[[:space:]]+[A-Za-z_][A-Za-z0-9_]*' FILE | awk '{print $NF}'`
+  (`-o` stops before the value). Report names, never values. The
+  `load-env-file` skill (`wi-secrets`) owns the naming convention, telling
+  vault references from literals, and the edge cases.
 - **Confirm before destructive operations.** Verify with the user before
   deleting containers (`incus delete`), resetting databases (`reset.sh`), or
   rebuilding systems (`nixos-rebuild`). See the owning repo for the exact rules.

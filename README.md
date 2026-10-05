@@ -51,6 +51,7 @@ Pull updates on existing repositories only:
 | `git-pull-all.sh` | Pull latest changes from all local repos | Git repositories in sibling directories |
 | `git-status-all.sh` | Show branch, tracking, and change status for every repo, colored so red means "action needed" | Git repositories in sibling directories |
 | `install-mcpc-skill.sh` | Snapshot `mcpc help --skill` into `wi-mcpc/mcpc-tool.md` (re-run after upgrading `@apify/mcpc`) | `mcpc` CLI installed (`npm install -g @apify/mcpc`) |
+| `install-nixos-ai-skill.sh` | (Re)generate `wi-nixos/nixos-ai-skill-tool/` from `marceloeatworld/nixos-ai-skill` upstream (shallow clone of `main`, always-latest; gitignored) | Run `./wi-base/refresh-skills.sh` afterward to publish symlinks |
 
 See [git-shortcuts-tool](git-shortcuts-tool/SKILL.md) for the `gs` (git status) and `gp` (add, commit, pull --rebase, push) shell shortcuts used across developer machines.
 

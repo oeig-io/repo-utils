@@ -114,6 +114,7 @@ The purpose of this setup is to contribute through a fork while keeping `origin`
 So leave `origin` alone (repo-utils cloned it correctly) and add your fork as a *separate* named remote. Let `gh` create both the fork and the remote — it emits a URL in whichever protocol `gh` is configured for, which is the only form that authenticates on hosts where `gh` is the sole GitHub credential:
 
 ```bash
+# fork only when a change is ready to land — see AGENTS.md → "Fork only when a change needs one"
 # origin stays canonical (oeig-io); the fork lands on its own remote
 gh repo fork --remote --remote-name fork
 

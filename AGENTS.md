@@ -134,6 +134,14 @@ These apply everywhere; repo docs hold the specifics.
   the read-only look and say so rather than refusing. The mechanics live in
   the `pi-headless-tui` skill (`wi-pi`) for the sub-agents themselves and
   `git-worktree` (`wi-github`) for keeping their checkouts from colliding.
+- **Fork only when a change needs one.** Fork a repo when a change in it is
+  ready to land — the step before its first push — and reuse a fork that
+  already exists. Never fork pre-emptively: not on "let's get started," not as
+  setup, and never across every repo "just in case." Each fork is a real
+  repository on the user's GitHub account that goes stale from the day it is
+  created, and someone must later find and delete it. More broadly, when the
+  task you were asked to do is done, stop and report — offer follow-up work,
+  don't perform it.
 - **Return to the default branch when a change is done.** The fork/branch/PR
   flow is documented in `repo-utils/README.md` → "Recommended fork/PR remote
   setup" (add a fork remote, branch from an up-to-date home base, push to the

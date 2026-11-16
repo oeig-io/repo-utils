@@ -54,6 +54,10 @@ Its core tenets apply everywhere in this workspace:
 When in doubt about format, naming, structure, or tone, defer to
 `wi-base/WORK_INSTRUCTIONS.md`.
 
+Check spelling before you commit prose: `codespell`, `hunspell`, and `typos`
+are installed (see `host-ai-user/AGENTS.md` → "Available Tools" for which to
+use when).
+
 ## Skills: `-tool` and `-task`
 
 Every skill in the index ends in `-tool` or `-task`, and the suffix tells you

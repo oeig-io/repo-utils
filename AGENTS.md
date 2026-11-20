@@ -58,6 +58,8 @@ Check spelling before you commit prose: `codespell`, `hunspell`, and `typos`
 are installed (see `host-ai-user/AGENTS.md` → "Available Tools" for which to
 use when).
 
+Check math using `bc`.
+
 ## Skills: `-tool` and `-task`
 
 Every skill in the index ends in `-tool` or `-task`, and the suffix tells you
